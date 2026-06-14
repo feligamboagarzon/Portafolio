@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard | moibymoi</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .admin-container {
+            max-width: 800px;
+            margin: 100px auto 50px;
+            padding: 2rem;
+            background: white;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            border-radius: 8px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 2rem;
+        }
+        th, td {
+            text-align: left;
+            padding: 1rem;
+            border-bottom: 1px solid #eee;
+        }
+        th {
+            background-color: #f9f9f9;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body class="checkout-page">
+    <header id="main-header" class="scrolled">
+        <a href="index.html" class="logo-container">
+            <span class="logo-main">moibymoi</span>
+            <span class="logo-tagline">Admin Dashboard</span>
+        </a>
+        <a href="index.html" class="back-to-shop">← Back to Shop</a>
+    </header>
+
+    <main class="admin-container">
+        <h2>Database View - Users</h2>
+        <table id="users-table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Username</th>
+                    <th>Role</th>
+                </tr>
+            </thead>
+            <tbody id="users-tbody">
+                <!-- Data injected here -->
+            </tbody>
+        </table>
+    </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const currentUser = localStorage.getItem('current_user');
+            if (!currentUser) {
+                alert('Access Denied. Please log in.');
+                window.location.href = 'index.html';
+                return;
+            }
+            
+            const user = JSON.parse(currentUser);
+            if (!user.is_admin) {
+                alert('Access Denied. Admin privileges required.');
+                window.location.href = 'index.html';
+                return;
+            }
+            
+            // Fetch users from DB
+            fetch('http://localhost:8000/api/admin/users?token=000')
+                .then(res => res.json())
+                .then(data => {
+                    const tbody = document.getElementById('users-tbody');
+                    if (data.error) {
+                        tbody.innerHTML = `<tr><td colspan="3">${data.error}</td></tr>`;
+                        return;
+                    }
+                    
+                    if (data.length === 0) {
+                        tbody.innerHTML = `<tr><td colspan="3">No users found.</td></tr>`;
+                        return;
+                    }
+                    
+                    let html = '';
+                    data.forEach(u => {
+                        html += `
+                            <tr>
+                                <td>${u.id}</td>
+                                <td>${u.username}</td>
+                                <td>${u.is_admin ? '<span style="color: green; font-weight: bold;">Admin</span>' : 'User'}</td>
+                            </tr>
+                        `;
+                    });
+                    tbody.innerHTML = html;
+                })
+                .catch(err => {
+                    console.error(err);
+                    document.getElementById('users-tbody').innerHTML = `<tr><td colspan="3">Failed to load database.</td></tr>`;
+                });
+        });
+    </script>
+</body>
+</html>

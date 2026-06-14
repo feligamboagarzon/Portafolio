@@ -1,0 +1,91 @@
+/* ftools-web/assets/css/global.css */
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&display=swap');
+
+:root {
+  /* Light Theme - Neo-brutalist Palette */
+  --bg-color: #f4f0ec; /* Light beige/off-white */
+  --text-color: #1a1a1a;
+  --accent-blue: #0055ff;
+  --accent-pink: #ff007f;
+  --accent-yellow: #ffde00;
+  --card-bg: #ffffff;
+  
+  /* Neo-brutalist Borders and Shadows */
+  --border-width: 3px;
+  --border-color: #1a1a1a;
+  --shadow-color: #1a1a1a;
+  --box-shadow: 4px 4px 0px var(--shadow-color);
+  --box-shadow-hover: 8px 8px 0px var(--shadow-color);
+}
+
+[data-theme="dark"] {
+  /* Dark Theme */
+  --bg-color: #121212;
+  --text-color: #f4f0ec;
+  --accent-blue: #3377ff;
+  --accent-pink: #ff3399;
+  --accent-yellow: #ffe633;
+  --card-bg: #1e1e1e;
+  
+  --border-color: #f4f0ec;
+  --shadow-color: #000000;
+  --box-shadow: 4px 4px 0px var(--accent-pink); /* Fun shadows in dark mode! */
+  --box-shadow-hover: 8px 8px 0px var(--accent-blue);
+}
+
+body {
+  font-family: 'Space Grotesk', sans-serif;
+  background-color: var(--bg-color);
+  color: var(--text-color);
+  transition: background-color 0.3s ease, color 0.3s ease;
+  margin: 0;
+  padding: 0;
+}
+
+/* Neo-brutalist Utilities */
+.neo-border {
+  border: var(--border-width) solid var(--border-color);
+  border-radius: 12px;
+}
+
+.neo-shadow {
+  box-shadow: var(--box-shadow);
+  transition: all 0.2s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+.neo-shadow:hover {
+  transform: translate(-4px, -4px);
+  box-shadow: var(--box-shadow-hover);
+}
+
+.neo-btn {
+  background-color: var(--accent-yellow);
+  color: #1a1a1a; /* Always dark text for contrast on yellow */
+  font-weight: bold;
+  cursor: pointer;
+  padding: 12px 24px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.neo-btn:active {
+  transform: translate(0px, 0px);
+  box-shadow: 0px 0px 0px var(--shadow-color);
+}
+
+/* Specific Accents */
+.bg-pink { background-color: var(--accent-pink); color: white; }
+.bg-blue { background-color: var(--accent-blue); color: white; }
+
+[data-theme="dark"] .bg-pink { color: #1a1a1a; }
+[data-theme="dark"] .bg-blue { color: #1a1a1a; }
+
+/* Micro-animations */
+.hover-bounce:hover {
+  animation: bounce-slight 0.4s ease infinite alternate;
+}
+
+@keyframes bounce-slight {
+  from { transform: translateY(0); }
+  to { transform: translateY(-5px); }
+}

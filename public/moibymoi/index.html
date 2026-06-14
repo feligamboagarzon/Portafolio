@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>moibymoi | Bikinis Minimalistas Premium</title>
+    <meta name="description" content="Descubre nuestra nueva colección de bikinis minimalistas, elegantes y de alta calidad. El ajuste perfecto para el verano moderno.">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header id="main-header">
+        <a href="#" class="logo-container">
+            <span class="logo-main">moibymoi</span>
+            <span class="logo-tagline">trajes de baño elegantes por Myriam Garzón</span>
+        </a>
+        <nav>
+            <ul id="nav-links">
+                <li><a href="#home">Inicio</a></li>
+                <li><a href="#collections">Colecciones</a></li>
+                <li><a href="#shop">Tienda</a></li>
+                <li><a href="#about">Nosotros</a></li>
+            </ul>
+        </nav>
+        <div class="header-actions" style="display: flex; align-items: center; gap: 1rem;">
+            <div class="account-icon" onclick="openAuthModal()" style="cursor: pointer;" id="account-icon-container">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+            </div>
+            <div class="cart-icon" onclick="toggleCart()">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path></svg>
+                <span id="cart-count" class="cart-count">0</span>
+            </div>
+            <button class="mobile-toggle" id="mobile-toggle">☰</button>
+        </div>
+    </header>
+
+    <main>
+        <section id="home" class="hero">
+            <img src="assets/images/products/hero.png" alt="Model wearing a minimalist bikini on a pristine beach" class="hero-bg">
+            <div class="hero-overlay"></div>
+            <div class="hero-content reveal">
+                <h1>Esenciales de Verano</h1>
+                <p>Líneas limpias, telas sostenibles, ajuste perfecto.</p>
+                <a href="#shop" class="btn">Comprar Colección</a>
+            </div>
+        </section>
+
+        <section id="collections" class="products-section reveal">
+            <div class="section-header">
+                <h2>Colecciones Exclusivas</h2>
+            </div>
+            <div class="collections-grid">
+                <div class="collection-card">
+                    <img src="assets/images/products/collection1.png" alt="Colección Verano 2026">
+                    <div class="collection-overlay">
+                        <h3>Verano 2026</h3>
+                        <a href="#shop" class="btn btn-sm">Explorar</a>
+                    </div>
+                </div>
+                <div class="collection-card">
+                    <img src="assets/images/products/collection2.png" alt="Colección Ropa de Resort">
+                    <div class="collection-overlay">
+                        <h3>Ropa de Resort</h3>
+                        <a href="#shop" class="btn btn-sm">Explorar</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="shop" class="products-section reveal">
+            <div class="section-header">
+                <h2>Nuevos Lanzamientos</h2>
+            </div>
+            <div class="product-grid">
+                <!-- Product 1 -->
+                <div class="product-card" onclick="openModal(['assets/images/products/product1.png', 'assets/images/products/product1_angle1.png'], 'Conjunto Ónix', '$120.00', 'Elegante, minimalista y con ajuste perfecto. Hecho de tela acanalada sostenible.')">
+                    <div class="product-image-container">
+                        <img src="assets/images/products/product1.png" alt="Bikini Negro Elegante">
+                        <div class="add-to-cart-overlay">Vista Rápida +</div>
+                    </div>
+                    <div class="product-info">
+                        <h3>Conjunto Ónix</h3>
+                        <div class="product-price">$120.00</div>
+                    </div>
+                </div>
+                <!-- Product 2 -->
+                <div class="product-card" onclick="openModal(['assets/images/products/product2.png', 'assets/images/products/product2_angle1.png'], 'Enterizo Perla', '$145.00', 'Un enterizo elegante con corte clásico. Diseñado para favorecer todo tipo de cuerpo.')">
+                    <div class="product-image-container">
+                        <img src="assets/images/products/product2.png" alt="Traje de Baño Enterizo Blanco">
+                        <div class="add-to-cart-overlay">Vista Rápida +</div>
+                    </div>
+                    <div class="product-info">
+                        <h3>Enterizo Perla</h3>
+                        <div class="product-price">$145.00</div>
+                    </div>
+                </div>
+                <!-- Product 3 -->
+                <div class="product-card" onclick="openModal(['assets/images/products/product3.png', 'assets/images/products/product3_angle1.png'], 'Conjunto Acanalado Oliva', '$115.00', 'Tonos tierra se combinan con texturas suaves. Nuestro conjunto acanalado ofrece excelente soporte y estilo.')">
+                    <div class="product-image-container">
+                        <img src="assets/images/products/product3.png" alt="Bikini Verde Oliva">
+                        <div class="add-to-cart-overlay">Vista Rápida +</div>
+                    </div>
+                    <div class="product-info">
+                        <h3>Conjunto Acanalado Oliva</h3>
+                        <div class="product-price">$115.00</div>
+                    </div>
+                </div>
+                <!-- Product 4 -->
+                <div class="product-card" onclick="openModal(['assets/images/products/product4.png', 'assets/images/products/product4_angle1.png'], 'Triángulo Terracota', '$110.00', 'Un corte de triángulo atemporal en un vibrante tono terracota. Tiras ajustables para el ajuste perfecto.')">
+                    <div class="product-image-container">
+                        <img src="assets/images/products/product4.png" alt="Bikini Naranja Terracota">
+                        <div class="add-to-cart-overlay">Vista Rápida +</div>
+                    </div>
+                    <div class="product-info">
+                        <h3>Triángulo Terracota</h3>
+                        <div class="product-price">$110.00</div>
+                    </div>
+                </div>
+                <!-- Product 5 -->
+                <div class="product-card" onclick="openModal(['assets/images/products/product5_1778044939022.png', 'assets/images/products/product5_angle1_1778044952119.png'], 'Enterizo Salvia', '$135.00', 'Enterizo minimalista verde salvia con ajuste y soporte premium.')">
+                    <div class="product-image-container">
+                        <img src="assets/images/products/product5_1778044939022.png" alt="Enterizo Verde Salvia">
+                        <div class="add-to-cart-overlay">Vista Rápida +</div>
+                    </div>
+                    <div class="product-info">
+                        <h3>Enterizo Salvia</h3>
+                        <div class="product-price">$135.00</div>
+                    </div>
+                </div>
+                <!-- Product 6 -->
+                <div class="product-card" onclick="openModal(['assets/images/products/product6_1778044964537.png', 'assets/images/products/product6_angle1_1778044978249.png'], 'Conjunto Tiro Alto Azul Marino', '$125.00', 'Clásico conjunto de tiro alto azul marino que brinda comodidad y elegancia.')">
+                    <div class="product-image-container">
+                        <img src="assets/images/products/product6_1778044964537.png" alt="Conjunto Tiro Alto Azul Marino">
+                        <div class="add-to-cart-overlay">Vista Rápida +</div>
+                    </div>
+                    <div class="product-info">
+                        <h3>Conjunto Tiro Alto Azul Marino</h3>
+                        <div class="product-price">$125.00</div>
+                    </div>
+                </div>
+                <!-- Product 7 -->
+                <div class="product-card" onclick="openModal(['assets/images/products/product7_1778044993966.png', 'assets/images/products/product7_angle1_1778045007221.png'], 'Conjunto con Varilla Coral', '$140.00', 'Conjunto coral vibrante con varilla de soporte y una silueta atemporal.')">
+                    <div class="product-image-container">
+                        <img src="assets/images/products/product7_1778044993966.png" alt="Conjunto con Varilla Coral">
+                        <div class="add-to-cart-overlay">Vista Rápida +</div>
+                    </div>
+                    <div class="product-info">
+                        <h3>Conjunto con Varilla Coral</h3>
+                        <div class="product-price">$140.00</div>
+                    </div>
+                </div>
+                <!-- Product 8 -->
+                <div class="product-card" onclick="openModal(['assets/images/products/product8.png', 'assets/images/products/product8_angle1.png'], 'Asimétrico Moca', '$150.00', 'Moderno enterizo asimétrico color moca que llama la atención.')">
+                    <div class="product-image-container">
+                        <img src="assets/images/products/product8.png" alt="Enterizo Asimétrico Moca">
+                        <div class="add-to-cart-overlay">Vista Rápida +</div>
+                    </div>
+                    <div class="product-info">
+                        <h3>Asimétrico Moca</h3>
+                        <div class="product-price">$150.00</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="about" class="products-section reveal" style="background-color: #fff; padding-top: 4rem; padding-bottom: 4rem;">
+            <div class="section-header">
+                <h2>Nuestra Filosofía</h2>
+                <p style="max-width: 600px; margin: 2rem auto; color: #666; font-size: 1.1rem; line-height: 1.8;">
+                    Creemos que los trajes de baño deben hacerte sentir segura y cómoda. 
+                    Cada pieza de nuestra colección está confeccionada con materiales sostenibles de alta calidad, 
+                    diseñada con una estética limpia y minimalista que perdura en el tiempo.
+                </p>
+            </div>
+        </section>
+
+        <section id="social" class="products-section reveal">
+            <div class="section-header">
+                <h2>Síguenos @moibymoi</h2>
+            </div>
+            <div class="insta-grid">
+                <img src="assets/images/products/insta1.png" alt="Instagram post 1">
+                <img src="assets/images/products/insta2.png" alt="Instagram post 2">
+                <img src="assets/images/products/insta3.png" alt="Instagram post 3">
+                <img src="assets/images/products/insta4.png" alt="Instagram post 4">
+            </div>
+        </section>
+    </main>
+
+    <footer id="footer">
+        <div class="footer-content reveal">
+            <h3>Únete al Club</h3>
+            <p>Suscríbete para recibir actualizaciones, acceso a ofertas exclusivas y más.</p>
+            <form class="newsletter-form" onsubmit="event.preventDefault(); showToast('¡Gracias por suscribirte!');">
+                <input type="email" placeholder="Ingresa tu correo electrónico" required>
+                <button type="submit">Suscribirse</button>
+            </form>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2026 moibymoi. Todos los derechos reservados.</p>
+        </div>
+    </footer>
+
+    <!-- Product Modal -->
+    <div id="product-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeModal()">&times;</span>
+            <div class="modal-body">
+                <div class="modal-image">
+                    <img id="modal-img" src="" alt="Product">
+                    <div id="modal-thumbnails" class="modal-thumbnails"></div>
+                </div>
+                <div class="modal-details">
+                    <h2 id="modal-title">Nombre del Producto</h2>
+                    <p id="modal-price" class="modal-price">$0.00</p>
+                    <p id="modal-desc" class="modal-desc">La descripción va aquí.</p>
+                    
+                    <div class="size-selector">
+                        <p>Seleccionar Talla</p>
+                        <div class="sizes">
+                            <button class="size-btn">XS</button>
+                            <button class="size-btn">S</button>
+                            <button class="size-btn">M</button>
+                            <button class="size-btn">L</button>
+                            <button class="size-btn">XL</button>
+                        </div>
+                    </div>
+                    
+                    <button class="btn btn-full" onclick="addToCart()">Agregar al Carrito</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Auth Modal -->
+    <div id="auth-modal" class="modal">
+        <div class="modal-content" style="max-width: 400px; padding: 2rem;">
+            <span class="close-modal" onclick="closeAuthModal()">&times;</span>
+            <div class="auth-container">
+                <h2 id="auth-title" style="text-align: center; margin-bottom: 1.5rem;">Iniciar Sesión</h2>
+                <form id="auth-form" onsubmit="handleAuth(event)">
+                    <div style="margin-bottom: 1rem;">
+                        <input type="text" id="auth-username" placeholder="Usuario" required class="form-input" style="width: 100%; padding: 0.8rem; border: 1px solid #ddd; font-family: 'Inter', sans-serif;">
+                    </div>
+                    <div style="margin-bottom: 1.5rem;">
+                        <input type="password" id="auth-passcode" placeholder="Contraseña" required class="form-input" style="width: 100%; padding: 0.8rem; border: 1px solid #ddd; font-family: 'Inter', sans-serif;">
+                    </div>
+                    <button type="submit" class="btn btn-full" id="auth-submit-btn">Iniciar Sesión</button>
+                </form>
+                <p style="text-align: center; margin-top: 1rem; font-size: 0.9rem;">
+                    <span id="auth-switch-text">¿No tienes cuenta?</span> 
+                    <a href="#" onclick="toggleAuthMode()" style="color: var(--primary-color); text-decoration: underline;" id="auth-switch-link">Regístrate</a>
+                </p>
+                <div id="auth-admin-link" style="display: none; text-align: center; margin-top: 1rem;">
+                    <a href="admin.html" style="color: var(--primary-color); font-weight: bold; text-decoration: underline;">Ir al Panel de Administración</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="toast" class="toast">Acción exitosa</div>
+
+    <div id="cart-sidebar" class="cart-sidebar">
+        <div class="cart-header">
+            <h2>Tu Carrito</h2>
+            <button class="close-cart" onclick="toggleCart()">&times;</button>
+        </div>
+        <div class="cart-items" id="cart-items">
+            <!-- Cart items will be injected here -->
+        </div>
+        <div class="cart-footer">
+            <div class="cart-subtotal">
+                <span>Subtotal</span>
+                <span id="cart-subtotal-price">$0.00</span>
+            </div>
+            <a href="checkout.html" class="btn btn-full">Ir a Pagar</a>
+        </div>
+    </div>
+    <div id="cart-overlay" class="cart-overlay" onclick="toggleCart()"></div>
+
+    <script src="script.js"></script>
+</body>
+</html>

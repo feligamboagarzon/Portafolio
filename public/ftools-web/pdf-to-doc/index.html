@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PDF a Word - Ftools</title>
+    <meta name="description" content="Convierte PDFs a Word (DOCX) editable. Alta fidelidad con CloudConvert. 100% gratis, sin registro de tarjeta.">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="../assets/css/global.css">
+    <link rel="stylesheet" href="../assets/css/ads.css">
+    <style>
+        .drop-zone { border: 4px dashed var(--border-color); transition: all .3s ease; }
+        .drop-zone.drag-over { border-style:solid; border-color:#a855f7; background:rgba(168,85,247,.06); transform:scale(1.01); }
+        .drop-zone.file-loaded { border-style:solid; border-color:#22c55e; background:rgba(34,197,94,.06); }
+
+        .progress-bar-fill { height:100%; background:linear-gradient(90deg,#a855f7,#ec4899); border-radius:9999px; transition:width .4s ease; }
+
+        .spinner { border:3px solid rgba(0,0,0,.1); border-top-color:#a855f7; border-radius:50%; width:24px; height:24px; animation:spin .8s linear infinite; display:inline-block; }
+        @keyframes spin { to { transform:rotate(360deg); } }
+
+        @keyframes shake { 0%,100%{transform:translateX(0)} 20%,60%{transform:translateX(-6px)} 40%,80%{transform:translateX(6px)} }
+        .shake { animation:shake .4s ease; }
+
+        @keyframes arrowPulse { 0%,100%{transform:translateX(0) scale(1)} 50%{transform:translateX(4px) scale(1.2)} }
+        .arrow-anim { animation:arrowPulse 1.4s ease-in-out infinite; }
+
+        .page-card {
+            background:var(--card-bg); border:2px solid var(--border-color);
+            border-radius:8px; padding:8px 12px;
+            animation:popIn .3s ease;
+        }
+        @keyframes popIn { from{transform:scale(.8);opacity:0} to{transform:scale(1);opacity:1} }
+
+        /* Engine selector */
+        .engine-btn {
+            flex:1; padding:12px 8px; border-radius:12px; border:3px solid var(--border-color);
+            background:var(--card-bg); font-weight:700; font-size:.85rem;
+            cursor:pointer; transition:all .2s; text-align:center;
+        }
+        .engine-btn:hover { transform:translateY(-2px); }
+        .engine-active {
+            background:#a855f7; color:white; border-color:#a855f7;
+            box-shadow:4px 4px 0 rgba(0,0,0,.25);
+        }
+
+        /* API key */
+        .key-input {
+            border:3px solid var(--border-color); border-radius:10px;
+            padding:10px 14px; font-size:.9rem; width:100%;
+            background:var(--card-bg); color:var(--text-color); outline:none;
+        }
+        .key-input:focus { border-color:#a855f7; }
+
+        #file-input-pdf { display:none; }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col">
+
+    <!-- Nav -->
+    <nav class="p-4 border-b-4 border-[color:var(--border-color)] flex justify-between items-center bg-[color:var(--bg-color)] sticky top-0 z-10">
+        <div class="flex items-center gap-4">
+            <a href="../index.html" class="neo-btn neo-border neo-shadow bg-purple-500 text-white hover-bounce w-12 h-12 flex items-center justify-center font-bold text-xl" aria-label="Volver">←</a>
+            <div>
+                <h1 class="text-xl font-bold leading-tight hidden sm:block">PDF a Word</h1>
+                <span class="text-xs opacity-60 hidden sm:block">Alta fidelidad · CloudConvert + Motor local</span>
+            </div>
+        </div>
+        <div class="flex items-center gap-3">
+            <button id="clear-btn" class="neo-btn neo-border neo-shadow px-4 py-2 text-sm bg-red-500 text-white hidden sm:flex items-center gap-2">🗑️ Limpiar Rastro</button>
+            <button id="theme-toggle" class="neo-border neo-shadow neo-btn text-xl flex items-center justify-center p-2 rounded-full w-12 h-12" aria-label="Cambiar Tema">
+                <span id="theme-icon">🌙</span>
+            </button>
+        </div>
+    </nav>
+
+    <main class="flex-grow flex flex-col items-center p-6 pt-10">
+        <div class="max-w-2xl w-full">
+
+            <!-- Header -->
+            <div class="text-center mb-8">
+                <h2 class="text-4xl md:text-5xl font-bold mb-4 leading-tight">
+                    Transforma <span class="bg-purple-500 text-white px-2 -rotate-2 inline-block rounded neo-border">PDFs</span> a Word
+                </h2>
+                <div class="flex justify-center items-center gap-4 mb-3">
+                    <div class="text-5xl">📄</div>
+                    <div class="text-3xl arrow-anim">→</div>
+                    <div class="text-5xl">📝</div>
+                </div>
+                <p class="text-sm opacity-60">Preserva tablas, imágenes y estilos · DOCX editable en Word o Google Docs</p>
+            </div>
+
+            <!-- Selector de Motor -->
+            <div class="bg-[color:var(--card-bg)] p-5 rounded-2xl neo-border neo-shadow mb-5">
+                <h3 class="font-bold uppercase text-xs tracking-widest mb-3 opacity-70">Motor de conversión</h3>
+                <div class="flex gap-3">
+                    <button id="engine-cloud" class="engine-btn engine-active">
+                        <div class="text-xl mb-1">🌐</div>
+                        <div>CloudConvert</div>
+                        <div class="text-xs font-normal opacity-80 mt-1">Alta fidelidad · Tablas e imágenes</div>
+                    </button>
+                    <button id="engine-local" class="engine-btn">
+                        <div class="text-xl mb-1">⚡</div>
+                        <div>Motor Local</div>
+                        <div class="text-xs font-normal opacity-80 mt-1">Sin internet extra · Solo texto</div>
+                    </button>
+                </div>
+            </div>
+
+            <!-- API Key (CloudConvert) -->
+            <div id="api-key-section" class="bg-[color:var(--card-bg)] p-5 rounded-2xl neo-border neo-shadow mb-5">
+                <h3 class="font-bold text-sm uppercase tracking-widest mb-1 opacity-70">CloudConvert API Key</h3>
+                <p class="text-xs opacity-60 mb-3">
+                    Registro gratuito en <a href="https://cloudconvert.com/register" target="_blank" class="underline text-purple-600">cloudconvert.com</a>
+                    · 25 conversiones/día · Sin tarjeta de crédito · Alta fidelidad (preserva tablas, imágenes y estilos).
+                </p>
+                <div class="flex gap-2">
+                    <input type="password" id="api-key-input" class="key-input" placeholder="eyJ0eXAiOiJKV1Qi...">
+                    <button id="save-key-btn" class="neo-btn neo-border neo-shadow px-4 py-2 text-sm rounded-lg whitespace-nowrap bg-purple-500 text-white">Guardar</button>
+                </div>
+            </div>
+
+            <!-- Aviso motor local -->
+            <div id="local-warning" class="hidden bg-yellow-50 border-3 border-yellow-400 p-4 rounded-2xl mb-5 text-sm">
+                <strong>⚡ Motor local:</strong> Extrae solo el texto plano del PDF.
+                Las <strong>tablas, imágenes y estilos se perderán</strong>.
+                Funciona sin API Key, sin internet extra. Ideal para documentos simples de texto.
+                <br><span class="opacity-70 mt-1 block">Si el PDF no tiene texto digital (es un escaneo/imagen) no se detectará nada. En ese caso, usa CloudConvert.</span>
+            </div>
+
+            <!-- Drop Zone -->
+            <div id="drop-zone" class="drop-zone bg-[color:var(--card-bg)] p-10 rounded-2xl cursor-pointer mb-5 text-center" role="button" tabindex="0">
+                <input type="file" id="file-input-pdf" accept=".pdf,application/pdf">
+                <div id="drop-idle">
+                    <div class="text-6xl mb-4">📄</div>
+                    <h3 class="text-2xl font-bold mb-2">Carga tu archivo PDF</h3>
+                    <p class="opacity-60 text-sm">Arrastra el PDF aquí o haz clic para seleccionarlo</p>
+                </div>
+                <div id="drop-loaded" class="hidden">
+                    <div class="text-5xl mb-3">📑</div>
+                    <h3 class="text-xl font-bold mb-1" id="pdf-name">documento.pdf</h3>
+                    <p class="opacity-60 text-sm" id="pdf-meta">—</p>
+                    <p class="text-purple-600 font-bold mt-2 text-sm" id="page-count-label"></p>
+                    <button id="change-pdf-btn" class="mt-3 text-xs underline opacity-60 hover:opacity-100">Cambiar archivo</button>
+                </div>
+            </div>
+
+            <!-- Vista previa de páginas -->
+            <div id="pages-preview" class="hidden mb-5">
+                <div class="bg-[color:var(--card-bg)] p-4 rounded-2xl neo-border neo-shadow">
+                    <h3 class="font-bold uppercase text-xs tracking-widest mb-3 opacity-70">Vista previa</h3>
+                    <div id="pages-grid" class="grid grid-cols-4 sm:grid-cols-6 gap-2 max-h-36 overflow-y-auto"></div>
+                </div>
+            </div>
+
+            <!-- Progreso -->
+            <div id="progress-section" class="hidden mb-5">
+                <div class="bg-[color:var(--card-bg)] p-6 rounded-2xl neo-border neo-shadow">
+                    <div class="flex items-center gap-3 mb-4">
+                        <div class="spinner"></div>
+                        <span id="progress-label" class="font-bold">Iniciando...</span>
+                    </div>
+                    <div class="w-full bg-gray-200 rounded-full h-3 neo-border overflow-hidden">
+                        <div id="progress-bar" class="progress-bar-fill" style="width:0%"></div>
+                    </div>
+                    <p class="text-xs opacity-50 mt-2">El archivo se procesa de forma segura · CloudConvert elimina los archivos automáticamente</p>
+                </div>
+            </div>
+
+            <!-- Descarga -->
+            <div id="download-section" class="hidden mb-5">
+                <div class="bg-[color:var(--card-bg)] p-6 rounded-2xl neo-border neo-shadow text-center">
+                    <div class="text-5xl mb-3">🎉</div>
+                    <h3 class="text-xl font-bold mb-1">¡Conversión completada!</h3>
+                    <p class="opacity-60 text-sm mb-4" id="download-meta">—</p>
+                    <a id="download-link" href="#" download class="inline-block neo-btn neo-border neo-shadow bg-green-500 text-white px-8 py-3 rounded-xl text-lg font-bold hover:bg-green-600 transition-colors">
+                        ⬇️ Descargar DOCX
+                    </a>
+                </div>
+            </div>
+
+            <!-- Error -->
+            <div id="error-section" class="hidden mb-5">
+                <div class="bg-red-50 border-4 border-red-500 p-5 rounded-2xl neo-shadow">
+                    <div class="text-3xl mb-2 text-center">⚠️</div>
+                    <p class="font-bold text-red-700 text-sm leading-relaxed" id="error-msg">Error</p>
+                    <button id="retry-btn" class="mt-3 text-xs underline text-red-600 block">Intentar de nuevo</button>
+                </div>
+            </div>
+
+            <!-- Convertir -->
+            <button id="convert-btn" class="w-full neo-btn neo-border neo-shadow bg-[color:var(--border-color)] text-[color:var(--bg-color)] text-xl py-4 px-12 rounded-xl opacity-40 cursor-not-allowed transition-all" disabled>
+                Convertir a DOCX
+            </button>
+
+            <!-- Comparación de motores -->
+            <div class="mt-6 bg-[color:var(--card-bg)] rounded-2xl neo-border overflow-hidden text-xs">
+                <div class="grid grid-cols-3 font-bold bg-purple-500 text-white p-3">
+                    <div>Característica</div>
+                    <div class="text-center">🌐 CloudConvert</div>
+                    <div class="text-center">⚡ Local</div>
+                </div>
+                <div class="divide-y divide-[color:var(--border-color)]">
+                    <div class="grid grid-cols-3 p-3 items-center"><span class="opacity-70">Texto</span><span class="text-center">✅</span><span class="text-center">✅</span></div>
+                    <div class="grid grid-cols-3 p-3 items-center"><span class="opacity-70">Tablas</span><span class="text-center">✅</span><span class="text-center">❌</span></div>
+                    <div class="grid grid-cols-3 p-3 items-center"><span class="opacity-70">Imágenes</span><span class="text-center">✅</span><span class="text-center">❌</span></div>
+                    <div class="grid grid-cols-3 p-3 items-center"><span class="opacity-70">Estilos</span><span class="text-center">✅</span><span class="text-center">❌</span></div>
+                    <div class="grid grid-cols-3 p-3 items-center"><span class="opacity-70">PDF escaneado</span><span class="text-center">✅ OCR</span><span class="text-center">❌</span></div>
+                    <div class="grid grid-cols-3 p-3 items-center"><span class="opacity-70">API Key</span><span class="text-center">Sí (gratis)</span><span class="text-center">No</span></div>
+                    <div class="grid grid-cols-3 p-3 items-center"><span class="opacity-70">Límite</span><span class="text-center">25/día</span><span class="text-center">Ilimitado</span></div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <div class="sm:hidden p-4 border-t-4 border-[color:var(--border-color)] flex justify-center bg-[color:var(--bg-color)] sticky bottom-0 z-10">
+        <button id="clear-btn-mobile" class="w-full neo-btn neo-border neo-shadow px-4 py-3 text-lg bg-red-500 text-white">🗑️ Limpiar Rastro</button>
+    </div>
+
+    <script src="../assets/js/theme-toggle.js"></script>
+    <script src="../assets/js/ftools-ads.js"></script>
+    <script src="pdf-to-doc.js"></script>
+</body>
+</html>

@@ -1,0 +1,697 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PDF Editor — Ftools</title>
+    <meta name="description" content="Edita PDFs directamente en tu navegador. Añade texto, reemplaza imágenes y descarga tu PDF editado. Sin servidores, 100% privado.">
+
+    <!-- Fuentes -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&display=swap" rel="stylesheet">
+
+    <!-- Tailwind -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Estilos Globales -->
+    <link rel="stylesheet" href="../assets/css/global.css">
+    <link rel="stylesheet" href="../assets/css/ads.css">
+
+    <style>
+        /* ── Estilos del Editor PDF ────────────────────────────────────── */
+        :root {
+            --editor-bg: #e8e4df;
+            --sidebar-w: 72px;
+            --props-w: 260px;
+        }
+
+        [data-theme="dark"] {
+            --editor-bg: #0d0d0d;
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            font-family: 'Space Grotesk', sans-serif;
+            overflow: hidden;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* ── Topbar ────────────────────────────────────────────────────── */
+        #topbar {
+            height: 56px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 16px;
+            border-bottom: 3px solid var(--border-color);
+            background: var(--bg-color);
+            z-index: 100;
+            gap: 12px;
+            flex-shrink: 0;
+        }
+
+        .topbar-left { display: flex; align-items: center; gap: 12px; }
+        .topbar-center { display: flex; align-items: center; gap: 8px; font-size: 13px; flex: 1; justify-content: center; }
+        .topbar-right { display: flex; align-items: center; gap: 8px; }
+
+        .file-info {
+            display: flex; align-items: center; gap: 6px;
+            background: var(--card-bg); border: 2px solid var(--border-color);
+            border-radius: 8px; padding: 4px 12px; font-size: 13px;
+            font-weight: 600; max-width: 220px;
+        }
+        .file-info span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+        /* ── Botones compactos ─────────────────────────────────────────── */
+        .icon-btn {
+            display: flex; align-items: center; justify-content: center;
+            width: 36px; height: 36px;
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            background: var(--card-bg);
+            cursor: pointer;
+            font-size: 16px;
+            transition: all 0.15s;
+            color: var(--text-color);
+        }
+        .icon-btn:hover { transform: translate(-2px, -2px); box-shadow: 3px 3px 0 var(--shadow-color); }
+        .icon-btn:active { transform: translate(0,0); box-shadow: none; }
+        .icon-btn:disabled { opacity: 0.4; cursor: not-allowed; transform: none; box-shadow: none; }
+
+        .primary-btn {
+            display: flex; align-items: center; gap: 6px;
+            padding: 8px 16px;
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            background: var(--accent-blue);
+            color: white;
+            font-weight: 700;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+        .primary-btn:hover { transform: translate(-2px, -2px); box-shadow: 3px 3px 0 var(--shadow-color); }
+        .primary-btn:active { transform: translate(0,0); box-shadow: none; }
+
+        .danger-btn {
+            background: #ef4444;
+            color: white;
+        }
+
+        /* ── Workspace principal ───────────────────────────────────────── */
+        #main-workspace {
+            display: flex;
+            flex: 1;
+            overflow: hidden;
+        }
+
+        /* ── Tool Sidebar ──────────────────────────────────────────────── */
+        #tool-sidebar {
+            width: var(--sidebar-w);
+            border-right: 3px solid var(--border-color);
+            background: var(--bg-color);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 12px 0;
+            gap: 6px;
+            z-index: 50;
+        }
+
+        .tool-btn {
+            width: 48px; height: 48px;
+            border: 2px solid transparent;
+            border-radius: 12px;
+            background: transparent;
+            cursor: pointer;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            gap: 2px;
+            transition: all 0.15s;
+            color: var(--text-color);
+            position: relative;
+        }
+        .tool-btn .tool-icon { font-size: 20px; line-height: 1; }
+        .tool-btn .tool-label { font-size: 8px; font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase; }
+        .tool-btn:hover {
+            background: var(--card-bg);
+            border-color: var(--border-color);
+            transform: translateX(2px);
+        }
+        .tool-btn.tool-active {
+            background: var(--accent-yellow);
+            border-color: var(--border-color);
+            box-shadow: 3px 3px 0 var(--shadow-color);
+            color: #1a1a1a;
+        }
+
+        .tool-divider {
+            width: 40px; height: 2px;
+            background: var(--border-color);
+            margin: 4px 0;
+            opacity: 0.4;
+        }
+
+        /* ── Canvas Area ───────────────────────────────────────────────── */
+        #canvas-area {
+            flex: 1;
+            background: var(--editor-bg);
+            overflow-y: auto;
+            overflow-x: auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+        }
+
+        #canvas-area::-webkit-scrollbar { width: 8px; height: 8px; }
+        #canvas-area::-webkit-scrollbar-track { background: transparent; }
+        #canvas-area::-webkit-scrollbar-thumb { background: var(--border-color); border-radius: 4px; opacity: 0.5; }
+
+        /* ── Drop Zone ─────────────────────────────────────────────────── */
+        #drop-zone {
+            flex: 1; display: flex; align-items: center; justify-content: center;
+            padding: 40px;
+        }
+
+        #drop-area {
+            width: 100%; max-width: 520px;
+            border: 3px dashed var(--border-color);
+            border-radius: 20px;
+            background: var(--card-bg);
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            padding: 60px 40px;
+            gap: 20px;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-align: center;
+        }
+
+        #drop-area:hover, #drop-zone.drag-over #drop-area {
+            border-color: var(--accent-pink);
+            box-shadow: 6px 6px 0 var(--accent-pink);
+            transform: translate(-3px, -3px);
+        }
+
+        .drop-icon { font-size: 72px; line-height: 1; }
+        .drop-title { font-size: 28px; font-weight: 700; }
+        .drop-subtitle { font-size: 16px; opacity: 0.7; }
+        .drop-btn {
+            padding: 12px 32px;
+            background: var(--accent-pink);
+            color: white;
+            border: 2px solid var(--border-color);
+            border-radius: 10px;
+            font-weight: 700;
+            font-size: 15px;
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+        .drop-btn:hover { transform: translate(-2px,-2px); box-shadow: 3px 3px 0 var(--border-color); }
+
+        /* ── PDF Workspace ─────────────────────────────────────────────── */
+        #pdf-workspace {
+            width: 100%; padding: 32px;
+            display: flex; flex-direction: column; align-items: center;
+            min-height: 100%;
+        }
+        #pdf-workspace.hidden { display: none; }
+        #drop-zone.hidden { display: none; }
+
+        #pdf-pages-container {
+            display: flex; flex-direction: column; align-items: center;
+            gap: 0;
+        }
+
+        /* ── Estilos de página ─────────────────────────────────────────── */
+        .page-wrapper {
+            position: relative;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.25);
+            border-radius: 2px;
+            background: white;
+        }
+
+        .page-label {
+            position: absolute;
+            top: -26px; left: 0;
+            font-size: 11px;
+            font-weight: 700;
+            opacity: 0.6;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--text-color);
+        }
+
+        .pdf-canvas {
+            display: block;
+        }
+
+        .annotation-layer {
+            position: absolute;
+            top: 0; left: 0;
+        }
+
+        /* ── Anotaciones ───────────────────────────────────────────────── */
+        .annotation.selected {
+            outline: 2px dashed var(--accent-pink) !important;
+            outline-offset: 2px;
+        }
+
+        .text-annotation {
+            transition: outline 0.1s;
+        }
+
+        .censor-annotation {
+            background: black !important;
+        }
+
+        /* ── Overlays edición texto existente ────────────────────────────── */
+        .te-overlay {
+            box-sizing: border-box;
+        }
+        .te-overlay.te-editing input {
+            font-family: 'Space Grotesk', sans-serif;
+        }
+
+        /* ── Properties Panel ──────────────────────────────────────────── */
+        #properties-panel {
+            width: var(--props-w);
+            border-left: 3px solid var(--border-color);
+            background: var(--bg-color);
+            padding: 16px;
+            display: none;
+            flex-direction: column;
+            gap: 14px;
+            overflow-y: auto;
+            z-index: 50;
+        }
+
+        .prop-section-title {
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            opacity: 0.6;
+            margin-bottom: 4px;
+        }
+
+        .prop-group { display: flex; flex-direction: column; gap: 8px; }
+
+        .prop-select, .prop-input {
+            width: 100%;
+            padding: 8px 10px;
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            background: var(--card-bg);
+            color: var(--text-color);
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 13px;
+            font-weight: 600;
+            outline: none;
+            transition: box-shadow 0.15s;
+        }
+        .prop-select:focus, .prop-input:focus {
+            box-shadow: 3px 3px 0 var(--accent-blue);
+        }
+
+        .prop-row { display: flex; align-items: center; gap: 8px; }
+
+        .size-range {
+            width: 100%;
+            accent-color: var(--accent-blue);
+        }
+
+        .size-badge {
+            min-width: 48px;
+            text-align: center;
+            font-weight: 700;
+            font-size: 13px;
+            padding: 4px 8px;
+            background: var(--card-bg);
+            border: 2px solid var(--border-color);
+            border-radius: 6px;
+        }
+
+        .style-btn {
+            flex: 1;
+            padding: 6px;
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            background: var(--card-bg);
+            color: var(--text-color);
+            font-weight: 700;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+        .style-btn:hover { background: var(--accent-yellow); }
+        .style-btn.active {
+            background: var(--accent-blue);
+            color: white;
+            box-shadow: 2px 2px 0 var(--shadow-color);
+        }
+
+        input[type="color"].color-input {
+            width: 100%; height: 44px;
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            padding: 3px;
+            background: var(--card-bg);
+            cursor: pointer;
+        }
+
+        /* ── Zoom Bar ──────────────────────────────────────────────────── */
+        #zoom-bar {
+            display: flex; align-items: center; gap: 6px;
+            background: var(--card-bg);
+            border: 2px solid var(--border-color);
+            border-radius: 10px;
+            padding: 4px 10px;
+        }
+        #zoom-display {
+            font-size: 12px; font-weight: 700;
+            min-width: 40px; text-align: center;
+        }
+
+        /* ── Loading Overlay ───────────────────────────────────────────── */
+        #loading-overlay {
+            position: fixed; inset: 0;
+            background: rgba(0,0,0,0.6);
+            backdrop-filter: blur(4px);
+            display: flex; flex-direction: column;
+            align-items: center; justify-content: center;
+            z-index: 9999;
+            gap: 20px;
+        }
+        #loading-overlay.hidden { display: none; }
+
+        .loading-spinner {
+            width: 56px; height: 56px;
+            border: 5px solid rgba(255,255,255,0.2);
+            border-top-color: var(--accent-yellow);
+            border-radius: 50%;
+            animation: spin 0.7s linear infinite;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        #loading-message {
+            color: white; font-size: 18px; font-weight: 700;
+        }
+
+        .progress-bar-container {
+            width: 240px; height: 6px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 3px; overflow: hidden;
+        }
+        #load-progress-bar {
+            height: 100%; width: 0%;
+            background: var(--accent-pink);
+            border-radius: 3px;
+            transition: width 0.1s;
+        }
+
+        /* ── Toast Notifications ───────────────────────────────────────── */
+        #toast-container {
+            position: fixed; bottom: 24px; right: 24px;
+            display: flex; flex-direction: column; gap: 8px;
+            z-index: 99999;
+        }
+
+        .toast {
+            padding: 12px 20px;
+            border-radius: 10px;
+            border: 2px solid var(--border-color);
+            font-weight: 700;
+            font-size: 14px;
+            max-width: 320px;
+            transform: translateX(120%);
+            transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            box-shadow: 4px 4px 0 var(--shadow-color);
+        }
+        .toast.toast-visible { transform: translateX(0); }
+        .toast.toast-hiding { transform: translateX(120%); }
+        .toast-success { background: #22c55e; color: white; }
+        .toast-error { background: #ef4444; color: white; }
+        .toast-info { background: var(--accent-blue); color: white; }
+
+        /* ── Responsive ────────────────────────────────────────────────── */
+        @media (max-width: 768px) {
+            :root { --props-w: 220px; --sidebar-w: 56px; }
+            .topbar-center { display: none; }
+            .primary-btn span { display: none; }
+        }
+        /* ── Modal Modo de Edición ─────────────────────────────────────── */
+        #mode-modal{position:fixed;inset:0;z-index:10000;background:rgba(0,0,0,.65);backdrop-filter:blur(6px);display:flex;align-items:center;justify-content:center;padding:24px;}
+        #mode-modal.hidden{display:none;}
+        .mode-dialog{background:var(--bg-color);border:3px solid var(--border-color);border-radius:20px;box-shadow:8px 8px 0 var(--shadow-color);padding:32px;max-width:720px;width:100%;}
+        .mode-dialog h2{font-size:22px;font-weight:700;margin:0 0 6px;}
+        .mode-subtitle{font-size:13px;opacity:.65;margin:0 0 24px;}
+        .mode-cards{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px;}
+        @media(max-width:540px){.mode-cards{grid-template-columns:1fr;}}
+        .mode-card{border:3px solid var(--border-color);border-radius:14px;padding:18px;cursor:pointer;transition:all .15s;background:var(--card-bg);position:relative;}
+        .mode-card:hover{transform:translate(-2px,-2px);box-shadow:4px 4px 0 var(--shadow-color);}
+        .mode-card.selected{border-color:var(--accent-blue);box-shadow:4px 4px 0 var(--accent-blue);}
+        .mode-icon{font-size:32px;margin-bottom:8px;}
+        .mode-card h3{font-size:15px;font-weight:700;margin:0 0 6px;}
+        .mode-desc{font-size:12px;opacity:.7;margin:0 0 12px;line-height:1.4;}
+        .mode-pcons{font-size:12px;line-height:1.7;}
+        .mode-pcons .pro{color:#16a34a;}
+        .mode-pcons .con{color:#dc2626;}
+        .mode-badge{position:absolute;top:10px;right:10px;font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px;border:1px solid;}
+        .badge-rec{background:#fef9c3;border-color:#ca8a04;color:#854d0e;}
+        .badge-easy{background:#dbeafe;border-color:#3b82f6;color:#1d4ed8;}
+        .mode-footer{display:flex;justify-content:flex-end;}
+        .mode-btn-ok{padding:11px 28px;background:var(--accent-blue);color:white;border:2px solid var(--border-color);border-radius:10px;font-weight:700;font-size:15px;cursor:pointer;transition:all .15s;}
+        .mode-btn-ok:hover{transform:translate(-2px,-2px);box-shadow:3px 3px 0 var(--shadow-color);}
+    </style>
+</head>
+<body>
+
+    <!-- ── Modal: Elegir modo de edición ─────────────────────────────── -->
+    <div id="mode-modal" class="hidden" role="dialog" aria-modal="true">
+      <div class="mode-dialog">
+        <h2>📤 ¿Cómo quieres editar el PDF?</h2>
+        <p class="mode-subtitle">Elige el método principal. Puedes combinar ambos en el mismo documento.</p>
+        <div class="mode-cards">
+          <div class="mode-card selected" id="mode-card-extract" data-mode="extract" role="radio" tabindex="0">
+            <span class="mode-badge badge-rec">Recomendado</span>
+            <div class="mode-icon">🔍</div>
+            <h3>Editar texto existente</h3>
+            <p class="mode-desc">Detecta y resalta el texto digital del PDF. Haz clic sobre cualquier palabra para editarla en su lugar exacto.</p>
+            <div class="mode-pcons">
+              <div class="pro">✅ Edita el texto original del PDF</div>
+              <div class="pro">✅ Detecta fuente, tamaño y color</div>
+              <div class="pro">✅ Resultado visualmente coherente</div>
+              <div class="con">⚠️ Solo texto digital (no escaneos)</div>
+              <div class="con">⚠️ Fuente exportada será estándar (Helvetica/Times)</div>
+            </div>
+          </div>
+          <div class="mode-card" id="mode-card-overlay" data-mode="overlay" role="radio" tabindex="0">
+            <span class="mode-badge badge-easy">Universal</span>
+            <div class="mode-icon">➕</div>
+            <h3>Agregar texto nuevo</h3>
+            <p class="mode-desc">Añade bloques de texto encima del PDF. Control total sobre fuente, tamaño y color. Funciona con cualquier PDF.</p>
+            <div class="mode-pcons">
+              <div class="pro">✅ Funciona con escaneos y PDFs imagen</div>
+              <div class="pro">✅ Control total de estilo y posición</div>
+              <div class="pro">✅ Ideal para formularios y anotaciones</div>
+              <div class="con">⚠️ El texto original queda debajo (visible)</div>
+              <div class="con">⚠️ Puede verse texto duplicado</div>
+            </div>
+          </div>
+        </div>
+        <div class="mode-footer">
+          <button class="mode-btn-ok" id="btn-mode-confirm">Continuar →</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── Loading Overlay ──────────────────────────────────────────────── -->
+    <div id="loading-overlay" class="hidden">
+        <div class="loading-spinner"></div>
+        <div id="loading-message">Cargando PDF...</div>
+        <div class="progress-bar-container">
+            <div id="load-progress-bar"></div>
+        </div>
+    </div>
+
+    <!-- ── Toast Container ──────────────────────────────────────────────── -->
+    <div id="toast-container" aria-live="polite"></div>
+
+    <!-- ── Topbar ────────────────────────────────────────────────────────── -->
+    <nav id="topbar">
+        <div class="topbar-left">
+            <a href="../index.html" class="icon-btn" title="Volver al inicio" aria-label="Volver">
+                ←
+            </a>
+            <div class="file-info">
+                <span>📄</span>
+                <span id="file-name-display">Sin archivo</span>
+            </div>
+        </div>
+
+        <div class="topbar-center">
+            <!-- Zoom controls -->
+            <div id="zoom-bar">
+                <button id="btn-zoom-out" class="icon-btn" title="Alejar" style="width:28px;height:28px;border-width:1px;">−</button>
+                <span id="zoom-display">150%</span>
+                <button id="btn-zoom-in" class="icon-btn" title="Acercar" style="width:28px;height:28px;border-width:1px;">+</button>
+                <button id="btn-zoom-reset" class="icon-btn" title="Restablecer zoom" style="width:28px;height:28px;border-width:1px;font-size:11px;">↺</button>
+            </div>
+
+            <!-- Info de páginas -->
+            <div style="font-size:12px;font-weight:700;opacity:0.6;">
+                <span id="total-pages-display">0</span> páginas
+            </div>
+
+            <!-- Undo/Redo -->
+            <button id="btn-undo" class="icon-btn" title="Deshacer (Ctrl+Z)">↩</button>
+            <button id="btn-redo" class="icon-btn" title="Rehacer (Ctrl+Y)">↪</button>
+        </div>
+
+        <div class="topbar-right">
+            <!-- Limpiar Rastro -->
+            <button class="btn-clear icon-btn" title="Limpiar todo" style="background:#fee2e2;border-color:#ef4444;color:#ef4444;">
+                🗑️
+            </button>
+
+            <!-- Exportar -->
+            <button id="btn-export" class="primary-btn" title="Guardar PDF editado">
+                ⬇️ <span>Descargar PDF</span>
+            </button>
+
+            <!-- Theme toggle -->
+            <button id="theme-toggle" class="icon-btn" title="Cambiar tema" aria-label="Cambiar tema">
+                <span id="theme-icon">🌙</span>
+            </button>
+        </div>
+    </nav>
+
+    <!-- ── Main Workspace ─────────────────────────────────────────────────── -->
+    <div id="main-workspace">
+
+        <!-- ── Tool Sidebar ────────────────────────────────────────────── -->
+        <aside id="tool-sidebar">
+            <button class="tool-btn" id="tool-select" title="Seleccionar y mover anotaciones">
+                <span class="tool-icon">↖️</span>
+                <span class="tool-label">Mover</span>
+            </button>
+
+            <div class="tool-divider"></div>
+
+            <button class="tool-btn" id="tool-text" title="Añadir texto nuevo">
+                <span class="tool-icon">T</span>
+                <span class="tool-label">Texto</span>
+            </button>
+
+            <button class="tool-btn" id="tool-text-edit" title="Editar texto existente del PDF">
+                <span class="tool-icon" style="font-size:15px;">T↔</span>
+                <span class="tool-label">Editar</span>
+            </button>
+
+            <button class="tool-btn" id="tool-image" title="Añadir o reemplazar imagen">
+                <span class="tool-icon">🖼️</span>
+                <span class="tool-label">Imagen</span>
+            </button>
+
+            <button class="tool-btn" id="tool-censor" title="Censurar / tachar área">
+                <span class="tool-icon">⬛</span>
+                <span class="tool-label">Tachar</span>
+            </button>
+
+            <div class="tool-divider"></div>
+
+            <!-- Limpiar en sidebar (mobile) -->
+            <button class="btn-clear tool-btn" title="Limpiar todo y empezar de nuevo" style="margin-top:auto; color:#ef4444;">
+                <span class="tool-icon">🗑️</span>
+                <span class="tool-label">Nuevo</span>
+            </button>
+        </aside>
+
+        <!-- ── Canvas Area ─────────────────────────────────────────────── -->
+        <div id="canvas-area">
+
+            <!-- Drop Zone (estado inicial) -->
+            <div id="drop-zone">
+                <div id="drop-area" role="button" tabindex="0" aria-label="Subir PDF">
+                    <div class="drop-icon" aria-hidden="true">📄</div>
+                    <h1 class="drop-title">Sube tu PDF</h1>
+                    <p class="drop-subtitle">Arrastra un archivo aquí o haz clic para explorar.<br>Todo se procesa en tu navegador — 100% privado.</p>
+                    <button class="drop-btn" type="button">Elegir archivo PDF</button>
+                    <p style="font-size:12px;opacity:0.5;margin:0;">PDF hasta 100 MB</p>
+                </div>
+            </div>
+
+            <!-- PDF Workspace (oculto hasta cargar) -->
+            <div id="pdf-workspace" class="hidden">
+                <div id="pdf-pages-container"></div>
+            </div>
+        </div>
+
+        <!-- ── Properties Panel (derecha) ──────────────────────────────── -->
+        <aside id="properties-panel">
+            <div style="font-size:14px;font-weight:700;border-bottom:2px solid var(--border-color);padding-bottom:10px;margin-bottom:4px;">
+                ✏️ Propiedades del Texto
+            </div>
+
+            <!-- Fuente -->
+            <div class="prop-group">
+                <div class="prop-section-title">Fuente</div>
+                <select class="prop-select" id="prop-font">
+                    <!-- poblado por JS -->
+                </select>
+            </div>
+
+            <!-- Tamaño -->
+            <div class="prop-group">
+                <div class="prop-section-title">Tamaño</div>
+                <div class="prop-row">
+                    <input type="range" class="size-range" id="prop-size"
+                           min="8" max="96" value="16" step="1">
+                    <span class="size-badge" id="prop-size-value">16px</span>
+                </div>
+            </div>
+
+            <!-- Color -->
+            <div class="prop-group">
+                <div class="prop-section-title">Color</div>
+                <input type="color" class="color-input" id="prop-color" value="#000000">
+            </div>
+
+            <!-- Estilo -->
+            <div class="prop-group">
+                <div class="prop-section-title">Estilo</div>
+                <div class="prop-row">
+                    <button class="style-btn" id="prop-bold" title="Negrita"><strong>B</strong></button>
+                    <button class="style-btn" id="prop-italic" title="Cursiva"><em>I</em></button>
+                </div>
+            </div>
+
+            <div style="border-top:2px solid var(--border-color);padding-top:12px;margin-top:4px;">
+                <p style="font-size:11px;opacity:0.6;line-height:1.4;">
+                    💡 <strong>Doble clic</strong> sobre el texto para editarlo.<br>
+                    <strong>Supr</strong> para eliminar el seleccionado.
+                </p>
+            </div>
+        </aside>
+
+    </div><!-- /#main-workspace -->
+
+    <!-- Hidden file input -->
+    <input type="file" id="file-input" accept="application/pdf" style="display:none;" aria-hidden="true">
+
+    <!-- ── Scripts (orden importante) ─────────────────────────────────── -->
+    <script src="js/core.js"></script>
+    <script src="js/renderer.js"></script>
+    <script src="js/text-tool.js"></script>
+    <script src="js/text-editor-tool.js"></script>
+    <script src="js/image-tool.js"></script>
+    <script src="js/exporter.js"></script>
+    <script src="js/editor.js"></script>
+    <script src="../assets/js/theme-toggle.js"></script>
+    <script src="../assets/js/ftools-ads.js"></script>
+
+</body>
+</html>

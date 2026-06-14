@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Audio Converter - Ftools</title>
+    <meta name="description" content="Convierte audio entre todos los formatos (MP3, WAV, FLAC, OGG, AAC) y extrae audio de videos. Motor local + CloudConvert.">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="../assets/css/global.css">
+    <link rel="stylesheet" href="../assets/css/ads.css">
+    <style>
+        .audio-wave { display:inline-block; width:6px; border-radius:3px; background:var(--accent-yellow); border:2px solid var(--border-color); animation:wave 1.2s ease-in-out infinite; }
+        .audio-wave:nth-child(1){height:16px;animation-delay:0s}
+        .audio-wave:nth-child(2){height:28px;animation-delay:.1s}
+        .audio-wave:nth-child(3){height:40px;animation-delay:.2s}
+        .audio-wave:nth-child(4){height:24px;animation-delay:.3s}
+        .audio-wave:nth-child(5){height:36px;animation-delay:.4s}
+        .audio-wave:nth-child(6){height:20px;animation-delay:.15s}
+        .audio-wave:nth-child(7){height:32px;animation-delay:.25s}
+        @keyframes wave { 0%,100%{transform:scaleY(.4);opacity:.6} 50%{transform:scaleY(1);opacity:1} }
+
+        .drop-zone { border:4px dashed var(--border-color); transition:all .3s ease; }
+        .drop-zone.drag-over { border-style:solid; border-color:var(--accent-yellow); background:rgba(255,222,0,.08); transform:scale(1.01); }
+        .drop-zone.file-loaded { border-style:solid; border-color:#22c55e; background:rgba(34,197,94,.06); }
+
+        .progress-bar-fill { height:100%; background:linear-gradient(90deg,var(--accent-yellow),var(--accent-pink)); border-radius:9999px; transition:width .3s ease; }
+
+        .format-badge { cursor:pointer; transition:all .15s ease; user-select:none; }
+        .format-badge.selected { background-color:var(--border-color); color:var(--bg-color); transform:translateY(-2px); box-shadow:0 4px 0 rgba(0,0,0,.3); }
+        .format-badge:not(.selected):hover { transform:translateY(-1px); }
+
+        .tab-btn { transition:all .2s; }
+        .tab-btn.active { background-color:var(--accent-yellow); color:var(--text-color); }
+
+        .spinner { border:3px solid rgba(0,0,0,.1); border-top-color:var(--accent-yellow); border-radius:50%; width:24px; height:24px; animation:spin .8s linear infinite; display:inline-block; }
+        @keyframes spin { to{transform:rotate(360deg)} }
+
+        @keyframes shake { 0%,100%{transform:translateX(0)} 20%,60%{transform:translateX(-6px)} 40%,80%{transform:translateX(6px)} }
+        .shake { animation:shake .4s ease; }
+
+        #file-input { display:none; }
+
+        /* Engine badge */
+        .engine-badge { font-size:.75rem; font-weight:600; padding:4px 10px; border-radius:8px; border:2px solid var(--border-color); background:var(--card-bg); display:inline-block; }
+
+        /* API key input */
+        .key-input { border:3px solid var(--border-color); border-radius:10px; padding:10px 14px; font-size:.9rem; width:100%; background:var(--card-bg); color:var(--text-color); outline:none; }
+        .key-input:focus { border-color:#a855f7; }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col">
+
+    <!-- Nav -->
+    <nav class="p-4 border-b-4 border-[color:var(--border-color)] flex justify-between items-center bg-[color:var(--bg-color)] sticky top-0 z-10">
+        <div class="flex items-center gap-4">
+            <a href="../index.html" class="neo-btn neo-border neo-shadow bg-[color:var(--accent-yellow)] hover-bounce w-12 h-12 flex items-center justify-center font-bold text-xl" aria-label="Volver">←</a>
+            <div>
+                <h1 class="text-xl font-bold leading-tight hidden sm:block">Audio Converter</h1>
+                <span class="text-xs opacity-60 hidden sm:block">Todos los formatos · Extrae de video</span>
+            </div>
+        </div>
+        <div class="flex items-center gap-3">
+            <button id="clear-btn" class="neo-btn neo-border neo-shadow px-4 py-2 text-sm bg-red-500 text-white hidden sm:flex items-center gap-2">🗑️ Limpiar Rastro</button>
+            <button id="theme-toggle" class="neo-border neo-shadow neo-btn text-xl flex items-center justify-center p-2 rounded-full w-12 h-12" aria-label="Cambiar Tema">
+                <span id="theme-icon">🌙</span>
+            </button>
+        </div>
+    </nav>
+
+    <main class="flex-grow flex flex-col items-center p-6 pt-10">
+        <div class="max-w-2xl w-full">
+
+            <!-- Header -->
+            <div class="text-center mb-8">
+                <h2 class="text-4xl md:text-5xl font-bold mb-4">Convierte cualquier <span class="bg-[color:var(--accent-yellow)] px-2 -rotate-1 inline-block rounded neo-border">audio</span></h2>
+                <div class="flex justify-center items-end gap-1 h-12 mb-3">
+                    <div class="audio-wave"></div><div class="audio-wave"></div><div class="audio-wave"></div>
+                    <div class="audio-wave"></div><div class="audio-wave"></div><div class="audio-wave"></div>
+                    <div class="audio-wave"></div>
+                </div>
+                <p class="text-sm opacity-60">MP3 · WAV · OGG · FLAC · AAC · OPUS · Extrae audio de video</p>
+            </div>
+
+            <!-- Tabs -->
+            <div class="flex gap-2 mb-5 p-1 bg-[color:var(--card-bg)] neo-border rounded-xl neo-shadow">
+                <button id="tab-audio" class="tab-btn active flex-1 py-3 px-4 rounded-lg font-bold text-sm uppercase tracking-wide neo-border">🎧 Archivo de Audio</button>
+                <button id="tab-video" class="tab-btn flex-1 py-3 px-4 rounded-lg font-bold text-sm uppercase tracking-wide neo-border">🎬 Extraer de Video</button>
+            </div>
+
+            <!-- Drop Zone -->
+            <div id="drop-zone" class="drop-zone bg-[color:var(--card-bg)] p-10 rounded-2xl cursor-pointer mb-5 text-center" role="button" tabindex="0">
+                <input type="file" id="file-input" accept="audio/*">
+                <div id="drop-idle">
+                    <div class="text-6xl mb-4" id="drop-icon">🎧</div>
+                    <h3 class="text-2xl font-bold mb-2" id="drop-title">Selecciona tu archivo de audio</h3>
+                    <p class="opacity-60 text-sm" id="drop-subtitle">WAV, MP3, OGG, FLAC, AAC, M4A · Arrastra o haz clic</p>
+                </div>
+                <div id="drop-loaded" class="hidden">
+                    <div class="text-5xl mb-3">✅</div>
+                    <h3 class="text-xl font-bold mb-1" id="file-name">archivo.wav</h3>
+                    <p class="opacity-60 text-sm" id="file-meta">—</p>
+                    <button id="change-file-btn" class="mt-3 text-xs underline opacity-60 hover:opacity-100">Cambiar archivo</button>
+                </div>
+            </div>
+
+            <!-- Motor indicator -->
+            <div class="mb-5 flex items-center gap-2">
+                <span class="engine-badge" id="engine-info">⚡ Motor: Navegador — sin internet extra requerido</span>
+            </div>
+
+            <!-- API Key Section (solo si se necesita CloudConvert) -->
+            <div id="api-key-section" class="hidden bg-[color:var(--card-bg)] p-5 rounded-2xl neo-border neo-shadow mb-5">
+                <h3 class="font-bold text-sm uppercase tracking-widest mb-1 opacity-70">CloudConvert API Key</h3>
+                <p class="text-xs opacity-60 mb-3">
+                    Registro gratuito en <a href="https://cloudconvert.com/register" target="_blank" class="underline text-purple-600">cloudconvert.com</a> · 25 conversiones/día gratis · Sin tarjeta de crédito.
+                </p>
+                <div class="flex gap-2">
+                    <input type="password" id="api-key-input" class="key-input" placeholder="eyJ0eXAiOiJKV1QiLCJhbGci...">
+                    <button id="save-key-btn" class="neo-btn neo-border neo-shadow px-4 py-2 text-sm rounded-lg whitespace-nowrap">Guardar</button>
+                </div>
+            </div>
+
+            <!-- Formato de Salida -->
+            <div class="bg-[color:var(--card-bg)] p-6 rounded-2xl neo-border neo-shadow mb-5">
+                <h3 class="font-bold uppercase text-sm tracking-widest mb-4 opacity-70">Formato de salida</h3>
+                <div class="flex flex-wrap gap-2">
+                    <button class="format-badge neo-border neo-shadow px-4 py-2 rounded-lg font-bold text-sm selected" data-format="mp3">MP3 <span class="text-xs font-normal opacity-60">⚡Local</span></button>
+                    <button class="format-badge neo-border neo-shadow px-4 py-2 rounded-lg font-bold text-sm" data-format="wav">WAV <span class="text-xs font-normal opacity-60">⚡Local</span></button>
+                    <button class="format-badge neo-border neo-shadow px-4 py-2 rounded-lg font-bold text-sm" data-format="ogg">OGG <span class="text-xs font-normal opacity-60">🌐API</span></button>
+                    <button class="format-badge neo-border neo-shadow px-4 py-2 rounded-lg font-bold text-sm" data-format="flac">FLAC <span class="text-xs font-normal opacity-60">🌐API</span></button>
+                    <button class="format-badge neo-border neo-shadow px-4 py-2 rounded-lg font-bold text-sm" data-format="aac">AAC <span class="text-xs font-normal opacity-60">🌐API</span></button>
+                    <button class="format-badge neo-border neo-shadow px-4 py-2 rounded-lg font-bold text-sm" data-format="opus">OPUS <span class="text-xs font-normal opacity-60">🌐API</span></button>
+                </div>
+            </div>
+
+            <!-- Bitrate -->
+            <div id="bitrate-section" class="bg-[color:var(--card-bg)] p-6 rounded-2xl neo-border neo-shadow mb-8">
+                <h3 class="font-bold uppercase text-sm tracking-widest mb-4 opacity-70">Calidad (bitrate)</h3>
+                <div class="flex flex-wrap gap-2">
+                    <button class="format-badge neo-border neo-shadow px-4 py-2 rounded-lg font-bold text-sm" data-bitrate="64">64 kbps <span class="font-normal opacity-60 text-xs">Ligero</span></button>
+                    <button class="format-badge neo-border neo-shadow px-4 py-2 rounded-lg font-bold text-sm selected" data-bitrate="128">128 kbps <span class="font-normal opacity-60 text-xs">Estándar</span></button>
+                    <button class="format-badge neo-border neo-shadow px-4 py-2 rounded-lg font-bold text-sm" data-bitrate="192">192 kbps <span class="font-normal opacity-60 text-xs">Alta</span></button>
+                    <button class="format-badge neo-border neo-shadow px-4 py-2 rounded-lg font-bold text-sm" data-bitrate="320">320 kbps <span class="font-normal opacity-60 text-xs">Máxima</span></button>
+                </div>
+            </div>
+
+            <!-- Progreso -->
+            <div id="progress-section" class="hidden mb-6">
+                <div class="bg-[color:var(--card-bg)] p-6 rounded-2xl neo-border neo-shadow">
+                    <div class="flex items-center gap-3 mb-4">
+                        <div class="spinner"></div>
+                        <span id="progress-label" class="font-bold">Iniciando...</span>
+                    </div>
+                    <div class="w-full bg-gray-200 rounded-full h-3 neo-border overflow-hidden">
+                        <div id="progress-bar" class="progress-bar-fill" style="width:0%"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Descarga -->
+            <div id="download-section" class="hidden mb-6">
+                <div class="bg-[color:var(--card-bg)] p-6 rounded-2xl neo-border neo-shadow text-center">
+                    <div class="text-5xl mb-3">🎉</div>
+                    <h3 class="text-xl font-bold mb-1">¡Conversión completada!</h3>
+                    <p class="opacity-60 text-sm mb-4" id="download-meta">—</p>
+                    <a id="download-link" href="#" download class="inline-block neo-btn neo-border neo-shadow bg-green-500 text-white px-8 py-3 rounded-xl text-lg font-bold hover:bg-green-600 transition-colors">⬇️ Descargar</a>
+                </div>
+            </div>
+
+            <!-- Error -->
+            <div id="error-section" class="hidden mb-6">
+                <div class="bg-red-50 border-4 border-red-500 p-5 rounded-2xl text-center neo-shadow">
+                    <div class="text-4xl mb-2">⚠️</div>
+                    <p class="font-bold text-red-700" id="error-msg">Error</p>
+                    <button id="retry-btn" class="mt-3 text-sm underline text-red-600">Intentar de nuevo</button>
+                </div>
+            </div>
+
+            <!-- Convertir -->
+            <button id="convert-btn" class="w-full neo-btn neo-border neo-shadow bg-[color:var(--border-color)] text-[color:var(--bg-color)] text-xl py-4 px-12 rounded-xl opacity-40 cursor-not-allowed transition-all" disabled>
+                Convertir
+            </button>
+
+            <!-- Leyenda de motores -->
+            <div class="mt-5 p-4 bg-[color:var(--card-bg)] rounded-xl neo-border text-xs opacity-70 space-y-1">
+                <p><strong>⚡ Local (MP3, WAV):</strong> Funciona sin internet extra. Usa el motor de tu navegador + lamejs.</p>
+                <p><strong>🌐 API (OGG, FLAC, AAC, OPUS, Video):</strong> Usa CloudConvert (25 gratis/día). Requiere API Key gratuita.</p>
+            </div>
+        </div>
+    </main>
+
+    <div class="sm:hidden p-4 border-t-4 border-[color:var(--border-color)] flex justify-center bg-[color:var(--bg-color)] sticky bottom-0 z-10">
+        <button id="clear-btn-mobile" class="w-full neo-btn neo-border neo-shadow px-4 py-3 text-lg bg-red-500 text-white">🗑️ Limpiar Rastro</button>
+    </div>
+
+    <script src="../assets/js/theme-toggle.js"></script>
+    <script src="../assets/js/ftools-ads.js"></script>
+    <script src="audio-converter.js"></script>
+</body>
+</html>

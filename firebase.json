@@ -1,0 +1,34 @@
+{
+  "hosting": {
+    "public": "dist",
+    "ignore": [
+      "firebase.json",
+      "**/.*",
+      "**/node_modules/**"
+    ],
+    "rewrites": [
+      {
+        "source": "/fStore/**",
+        "destination": "/fStore/index.html"
+      },
+      {
+        "source": "/Proyecto-decisiones-de-inversion/**",
+        "destination": "/Proyecto-decisiones-de-inversion/index.html"
+      },
+      {
+        "source": "/moibymoi/**",
+        "destination": "/moibymoi/index.html"
+      },
+      {
+        "source": "/ftools-web/**",
+        "destination": "/ftools-web/index.html"
+      },
+      {
+        "source": "**",
+        "destination": "/index.html"
+      }
+    ],
+    "cleanUrls": true,
+    "trailingSlash": false
+  }
+}
