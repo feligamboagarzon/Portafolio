@@ -1,0 +1,302 @@
+{
+  "firebase.json": {
+    "mtime": 1781442682.0197127,
+    "ast_hash": "82960ad4be7dbfb4129ded545692a4e0",
+    "semantic_hash": ""
+  },
+  "package.json": {
+    "mtime": 1781442682.0216186,
+    "ast_hash": "e9c26fc45c7a6c9fb059671804f991ac",
+    "semantic_hash": ""
+  },
+  "public/Proyecto-decisiones-de-inversion/assets/index-C54IxFQZ.js": {
+    "mtime": 1781442682.022765,
+    "ast_hash": "cf95c16109caef55118af61be570b6d4",
+    "semantic_hash": ""
+  },
+  "public/fStore/assets/index-B3jPbVkt.js": {
+    "mtime": 1781442682.0238934,
+    "ast_hash": "57a2f7b42e18e28748d7abac6463c8f3",
+    "semantic_hash": ""
+  },
+  "public/ftools-web/assets/js/ftools-ads.js": {
+    "mtime": 1781442682.0440457,
+    "ast_hash": "d8bd7af15dd26b47cf6fd04213b84865",
+    "semantic_hash": ""
+  },
+  "public/ftools-web/assets/js/theme-toggle.js": {
+    "mtime": 1781442682.0441532,
+    "ast_hash": "d188fe1aab46ea89782e632e902008f5",
+    "semantic_hash": ""
+  },
+  "public/ftools-web/audio-converter/audio-converter.js": {
+    "mtime": 1781442682.0444021,
+    "ast_hash": "ce665d16b31bc922ebbc8e2b0ed542e6",
+    "semantic_hash": ""
+  },
+  "public/ftools-web/pdf-editor/js/core.js": {
+    "mtime": 1781442682.045545,
+    "ast_hash": "2839e278df56c24615785bdc5a445f3e",
+    "semantic_hash": ""
+  },
+  "public/ftools-web/pdf-editor/js/editor.js": {
+    "mtime": 1781442682.0456803,
+    "ast_hash": "c4c9541d16015570fa28a2da0bb297ec",
+    "semantic_hash": ""
+  },
+  "public/ftools-web/pdf-editor/js/exporter.js": {
+    "mtime": 1781442682.0458834,
+    "ast_hash": "31fdb608e3e621a5430a32dc2df7c64e",
+    "semantic_hash": ""
+  },
+  "public/ftools-web/pdf-editor/js/image-tool.js": {
+    "mtime": 1781442682.0460637,
+    "ast_hash": "331879c7c69fd9c26ed5f4ef990723bd",
+    "semantic_hash": ""
+  },
+  "public/ftools-web/pdf-editor/js/renderer.js": {
+    "mtime": 1781442682.046184,
+    "ast_hash": "5c01d06f635fb18781abe3084cdea554",
+    "semantic_hash": ""
+  },
+  "public/ftools-web/pdf-editor/js/text-editor-tool.js": {
+    "mtime": 1781442682.0463326,
+    "ast_hash": "178eb084f5f223208bbf8de3fc614649",
+    "semantic_hash": ""
+  },
+  "public/ftools-web/pdf-editor/js/text-tool.js": {
+    "mtime": 1781442682.0464988,
+    "ast_hash": "c33b128297042aa5b9506b4a8c4fb2b5",
+    "semantic_hash": ""
+  },
+  "public/ftools-web/pdf-to-doc/pdf-to-doc.js": {
+    "mtime": 1781442682.046912,
+    "ast_hash": "1348d4465c3f7e020e8b8aba315462b8",
+    "semantic_hash": ""
+  },
+  "public/moibymoi/script.js": {
+    "mtime": 1781442682.0947661,
+    "ast_hash": "be5c9142b439e4b2605295b10d0f3913",
+    "semantic_hash": ""
+  },
+  "public/moibymoi/server.py": {
+    "mtime": 1781442682.095884,
+    "ast_hash": "70079c440642b471c6054c6a3043f440",
+    "semantic_hash": ""
+  },
+  "skills-lock.json": {
+    "mtime": 1781442682.096269,
+    "ast_hash": "90375e0340d81ecfa61f6659b672e384",
+    "semantic_hash": ""
+  },
+  "src/App.jsx": {
+    "mtime": 1781442682.0970488,
+    "ast_hash": "a450b19392ec198d6c12d95ae73214ef",
+    "semantic_hash": ""
+  },
+  "src/Router.jsx": {
+    "mtime": 1781472324.9801624,
+    "ast_hash": "6d97af913a7fb110edb0bed5b59cb33d",
+    "semantic_hash": ""
+  },
+  "src/components/ArtworkCard.jsx": {
+    "mtime": 1781472277.2205687,
+    "ast_hash": "b34adcb7a3fa674b94fb39499009567a",
+    "semantic_hash": ""
+  },
+  "src/components/sections/ContactClose.jsx": {
+    "mtime": 1781472209.0368345,
+    "ast_hash": "9335a2eb79117202214475c38b4013e8",
+    "semantic_hash": ""
+  },
+  "src/components/sections/HeroExperimental.jsx": {
+    "mtime": 1781472166.1083114,
+    "ast_hash": "3c43e62be70d99cb7559215bd06d1d50",
+    "semantic_hash": ""
+  },
+  "src/components/sections/Journey.jsx": {
+    "mtime": 1781472200.4370663,
+    "ast_hash": "f3e50ff39043e7d5c901d8806fe58b25",
+    "semantic_hash": ""
+  },
+  "src/components/sections/Manifesto.jsx": {
+    "mtime": 1781472174.3665972,
+    "ast_hash": "77ab67f1d30d8568b25bae60d81a307a",
+    "semantic_hash": ""
+  },
+  "src/components/sections/SelectedWork.jsx": {
+    "mtime": 1781474194.4110677,
+    "ast_hash": "a7f6a2354c2e8b9cf216e02bed703c7c",
+    "semantic_hash": ""
+  },
+  "src/components/sections/SiteFooter.jsx": {
+    "mtime": 1781472215.5511637,
+    "ast_hash": "9a7fece90d41f78d1a5e39e1bab1c28b",
+    "semantic_hash": ""
+  },
+  "src/components/sections/SiteNav.jsx": {
+    "mtime": 1781472144.1597931,
+    "ast_hash": "3431e754f56ff6be005d143e74e63e86",
+    "semantic_hash": ""
+  },
+  "src/components/ui/Cursor.jsx": {
+    "mtime": 1781472097.5941694,
+    "ast_hash": "d2edde481a3a92185404dff5e0a90432",
+    "semantic_hash": ""
+  },
+  "src/components/ui/Grain.jsx": {
+    "mtime": 1781472106.8126662,
+    "ast_hash": "3d0db533acc1057fcfcd790481ebe03a",
+    "semantic_hash": ""
+  },
+  "src/components/ui/KineticText.jsx": {
+    "mtime": 1781472708.743836,
+    "ast_hash": "bd51960adb1b4810ff97c695aaa7a1b8",
+    "semantic_hash": ""
+  },
+  "src/components/ui/Magnetic.jsx": {
+    "mtime": 1781472087.0697358,
+    "ast_hash": "4c0054bdb1cbbf1d154029ba291adf9c",
+    "semantic_hash": ""
+  },
+  "src/components/ui/Reveal.jsx": {
+    "mtime": 1781472070.0468738,
+    "ast_hash": "5232cad73f96f0a6e1752bda7c73f68e",
+    "semantic_hash": ""
+  },
+  "src/components/ui/usePrefersReducedMotion.js": {
+    "mtime": 1781472065.4286401,
+    "ast_hash": "097e629fdd969c5ba44397b8d2583d35",
+    "semantic_hash": ""
+  },
+  "src/data/portfolioData.js": {
+    "mtime": 1781502811.4516027,
+    "ast_hash": "03c80b8e788106d8d860bff9f1478f7a",
+    "semantic_hash": ""
+  },
+  "src/main.jsx": {
+    "mtime": 1779263277.3398309,
+    "ast_hash": "54a301507dcdfccf4e5565754374b5dc",
+    "semantic_hash": ""
+  },
+  "src/pages/Home.jsx": {
+    "mtime": 1781472222.7541838,
+    "ast_hash": "609adb029d4de153b5fe9b001291948e",
+    "semantic_hash": ""
+  },
+  "src/pages/MuseumCanvas.jsx": {
+    "mtime": 1781502223.794578,
+    "ast_hash": "e96d6ce67a3fd11cc1b1d9669aace67d",
+    "semantic_hash": ""
+  },
+  "src/pages/ProjectDetail.jsx": {
+    "mtime": 1781502227.3879433,
+    "ast_hash": "fd1ecd311ad6ea9246d343da09c0b846",
+    "semantic_hash": ""
+  },
+  "src/pages/ResumeDocument.jsx": {
+    "mtime": 1781472313.4860415,
+    "ast_hash": "7c042beaed6671730310bb214a40ddee",
+    "semantic_hash": ""
+  },
+  "vite.config.js": {
+    "mtime": 1779263263.5744195,
+    "ast_hash": "ac605e4b540846227ec125e13f24f3e2",
+    "semantic_hash": ""
+  },
+  "index.html": {
+    "mtime": 1781442682.0203514,
+    "ast_hash": "d38b158734a550e0bc9d7fc2732e39e7",
+    "semantic_hash": ""
+  },
+  "public/Proyecto-decisiones-de-inversion/index.html": {
+    "mtime": 1781442682.0233412,
+    "ast_hash": "93a479628d114c782a37dcd19a0d5c50",
+    "semantic_hash": ""
+  },
+  "public/fStore/index.html": {
+    "mtime": 1781442682.0419269,
+    "ast_hash": "41b637637095727a22b138429c5a9b9b",
+    "semantic_hash": ""
+  },
+  "public/ftools-web/audio-converter/README.md": {
+    "mtime": 1781442682.0442894,
+    "ast_hash": "a46d3735069277c7263cf8370e9fc7f3",
+    "semantic_hash": ""
+  },
+  "public/ftools-web/audio-converter/index.html": {
+    "mtime": 1781442682.044568,
+    "ast_hash": "b972929169ab2103f7877be540ed3eee",
+    "semantic_hash": ""
+  },
+  "public/ftools-web/index.html": {
+    "mtime": 1781442682.0447135,
+    "ast_hash": "5d8b087f1a0ed6a9eac313c15a579c51",
+    "semantic_hash": ""
+  },
+  "public/ftools-web/landing-page/README.md": {
+    "mtime": 1781442682.0449,
+    "ast_hash": "dca7c9de00261e35a4a72307ef4ff5bd",
+    "semantic_hash": ""
+  },
+  "public/ftools-web/monetization-plan.md": {
+    "mtime": 1781442682.0449872,
+    "ast_hash": "bc7c1305918294966df15b52e0341ff5",
+    "semantic_hash": ""
+  },
+  "public/ftools-web/pdf-editor/README.md": {
+    "mtime": 1781442682.0451212,
+    "ast_hash": "73667eb86430471a00f45532b7102b7c",
+    "semantic_hash": ""
+  },
+  "public/ftools-web/pdf-editor/index.html": {
+    "mtime": 1781442682.0453393,
+    "ast_hash": "ded58fc78506e61ac8e56735badc65ed",
+    "semantic_hash": ""
+  },
+  "public/ftools-web/pdf-to-doc/README.md": {
+    "mtime": 1781442682.046637,
+    "ast_hash": "4b9b054ae09dad3ca0b90cd477befc12",
+    "semantic_hash": ""
+  },
+  "public/ftools-web/pdf-to-doc/index.html": {
+    "mtime": 1781442682.046805,
+    "ast_hash": "7598ef644e7eeecaa1be948d10186c7a",
+    "semantic_hash": ""
+  },
+  "public/ftools-web/project-map.md": {
+    "mtime": 1781442682.047013,
+    "ast_hash": "710d7ce9565571b6589a1cfeb25f01e0",
+    "semantic_hash": ""
+  },
+  "public/ftools-web/video-downloader/README.md": {
+    "mtime": 1781442682.0471454,
+    "ast_hash": "06c97f542a35d2297abeaa1079908e3d",
+    "semantic_hash": ""
+  },
+  "public/ftools-web/video-downloader/index.html": {
+    "mtime": 1781442682.047263,
+    "ast_hash": "1cc4863e604ce1a80e268bccf53c891a",
+    "semantic_hash": ""
+  },
+  "public/moibymoi/Prompt.md": {
+    "mtime": 1781442682.057758,
+    "ast_hash": "5d728daaa2a9dbca5f1552e0c71ed3dd",
+    "semantic_hash": ""
+  },
+  "public/moibymoi/admin.html": {
+    "mtime": 1781442682.0578444,
+    "ast_hash": "60016816267748d447bb1a1ab4f7eac0",
+    "semantic_hash": ""
+  },
+  "public/moibymoi/checkout.html": {
+    "mtime": 1781442682.0940735,
+    "ast_hash": "fc923aebd16a051eb5883f1fb5c2ec38",
+    "semantic_hash": ""
+  },
+  "public/moibymoi/index.html": {
+    "mtime": 1781442682.0946703,
+    "ast_hash": "104c70285db2611c73a2d2e95aabaddd",
+    "semantic_hash": ""
+  }
+}
